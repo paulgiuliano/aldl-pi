@@ -1,0 +1,36 @@
+This is a utility to read a whole ton of various log entries and make some
+sense out of them.
+
+It is non-interactive, and simply performs logical analysis of the logs based
+on various parameters and thresholds.  Temperature and minimum timestamps are
+checked to attempt to discard bad data.
+
+Not really tested or designed for anything but an LT1.
+
+Requires fully manual configuration for log column numbering, doesn't use the
+aldl-io definition file at all.
+
+It includes the following analyzers:
+
+- Wideband AFR vs MAF (For MAF Tuning)
+- Wideband AFR vs MAP vs RPM (For VE Tuning)
+- Wideband AFR vs RPM in PE MODE (For PE Tuning)
+- BLM Cell Ranges & Averages per RPM, MAP, MAF, and trim (for BLM optimization)
+- Knock count increment events vs MAP vs RPM (for timing tuning)
+
+Instructions:
+
+$ make & make install
+
+Have a look at /etc/aldl/analyzer.conf
+
+You can disable various modules (wideband is disabled by default).  You have to
+manually configure column numbers for EVERY relavent peice of data in your log,
+it is pre-configured for the default LT1 configuration file that comes with the
+matching version of the aldl-io package.
+
+Then run it:
+$ aldl-analyzer file1.csv file2.csv | less
+
+Use and trust at your own risk...
+
