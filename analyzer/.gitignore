@@ -1,0 +1,7 @@
+*.a
+*.so
+*.o
+aldl-ftdi
+aldl-tty
+aldl-dummy
+aldl-analyzer

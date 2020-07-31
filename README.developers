@@ -1,0 +1,86 @@
+Access of Data:
+
+- A linked list of aldl_record_t structures is constructed as fixed length
+  buffer.
+
+- No locking is required for reading data from the top of the buffer, the data
+  will NEVER be modified once it is attached to the linked list.
+
+- Data in a record always matches the array index of the definition set, as in
+  conf->def[x] and record->data[x].  This can be leveraged to easily get data
+  from a definition.
+
+- There is a statistical structure that requires locking, lock_stats() and
+  unlock_stats() need to be called.
+
+/*------------------------------------------------------------------------*/
+
+/* this is a small example module that simply displays data from a defintion
+   labeled "RPM". */
+
+void display_rpm(aldl_conf_t *aldl) {
+
+  /* get the index and store it, to avoid repeated lookups */
+  int rpmindex = get_index_by_name(aldl,"RPM");
+
+  pause_until_buffered(aldl);
+
+  aldl_record_t *rec = newest_record(aldl); /* ptr to the most current record */
+
+  while(1) {
+
+    /* pause until new data is available, then point to new record */
+    rec = next_record_wait(aldl,rec);
+
+    /* check return value.  if it's NULL that means..... */
+    if(rec == NULL) { /* we've disconnected ... */
+      printf("disconnected; waiting for connection...");
+      pause_until_connected(aldl);
+      continue; /* right now rec is NULL, we need to go back and get a rec */
+    };
+
+    /* in that record, get data field rpmindex, and the floating point value
+       contained within ... also get the short name from the definition. */
+    printf("%s: %f\n",aldl->def[rpmindex].name, rec->data[rpmindex].f);
+  };
+};
+
+/*------------------------------------------------------------------------*/
+
+RULES FOR PLUGIN DEVELOPERS:
+
+- Always call pause_until_buffered before your intial data retrieval, this
+  ensures the buffer is full enough, and the connection has happened.  after
+  one call, the buffer will ALWAYS be full enough.
+
+- Never access the linked list pointers directly, use the following functions:
+
+  aldl_record_t *newest_record(aldl_conf_t *aldl);
+  aldl_record_t *next_record_wait(aldl_record_t *rec);
+  aldl_record_t *next_record(aldl_record_t *rec);
+
+  These ensure thread safety on the structural components themselves.  Be sure
+  to check the return value, as a NULL pointer is returned if the connection
+  is lost while waiting for a record.
+
+- Never, under any circumstances, write directly to any data structure from
+  aldl-types.h
+
+- Ending the program via a plugin should always be done by running:
+  while(1) set_commstate(ALDL_QUIT); (not implemented yet)
+
+- Speed is important when using next_record or next_record_wait, your routine
+  must theoretically execute in average speed more quickly than:
+
+  t = ( 0.122ms * number of bytes in all pkts * 1.2 )
+
+  On an LT1 using 64 byte packets this allows approx. 10ms once calculation
+  overhead is taken into account.  If your routine is slower on average, you
+  must use newest_record() to allow frame skipping, in which case your routine
+  can take t * bufsize time with no problems.
+
+  If you hit a buffer underrun, current behavior is to point to another record
+  "somewhere".  The data will be out of sequence but technically valid.  To
+  detect an underrun, checking for timestamp could be useful, as an underrun
+  will almost certainly result in a timestamp decrementing.
+
