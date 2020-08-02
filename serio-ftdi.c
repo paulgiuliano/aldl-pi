@@ -8,7 +8,7 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 
-#include <libftdi1/ftdi.h>
+#include <ftdi.h>
 
 #include "serio.h"
 #include "aldl-io.h"

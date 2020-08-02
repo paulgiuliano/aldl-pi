@@ -1,4 +1,4 @@
-#define VERSION "ALDL-IO 1.6a"
+#define VERSION "ALDL-PI 1.6a"
 
 /************ SCOPE *********************************
   Static #define's that apply to the entire program.
@@ -14,7 +14,7 @@
 
 /* path to the root config file */
 /* TODO need to make an override on command line option in main.c */
-#define ROOT_CONFIG_FILE "/etc/aldl/aldl.conf"
+#define ROOT_CONFIG_FILE "/etc/aldl-pi/aldl-pi.conf"
 
 /* ----------- DEBUG OUTPUT --------------------------*/
 

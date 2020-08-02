@@ -4,15 +4,15 @@ OBJS= acquire.o error.o loadconfig.o useful.o aldlcomm.o aldldata.o consoleif.o 
 LIBS= -lpthread -lrt -lncurses
 
 # install configuration
-CONFIGDIR= /etc/aldl
-LOGDIR= /var/log/aldl
+CONFIGDIR= /etc/aldl-pi
+LOGDIR= /var/log/aldl-pi
 BINDIR= /usr/local/bin
-BINARIES= aldl-ftdi aldl-tty aldl-dummy
+BINARIES= aldl-pi-ftdi aldl-pi-tty aldl-pi-dummy
 
 .PHONY: clean install stats
 
 # not building tty driver by default yet
-all: aldl-ftdi aldl-tty aldl-dummy
+all: aldl-pi-ftdi aldl-pi-tty aldl-pi-dummy
 	@echo
 	@echo '*********************************************************'
 	@echo ' Run the following as root to install the binaries and'
@@ -21,10 +21,10 @@ all: aldl-ftdi aldl-tty aldl-dummy
 	@echo
 
 # not installing tty driver by default yet
-install: aldl-ftdi aldl-dummy
+install: aldl-pi-ftdi aldl-pi-dummy
 	@echo Installing to $(BINDIR)
 	cp -fv $(BINARIES) $(BINDIR)/
-	ln -sf $(BINDIR)/aldl-ftdi $(BINDIR)/aldl
+	ln -sf $(BINDIR)/aldl-pi-ftdi $(BINDIR)/aldl-pi
 	@echo 'Creating directory structure'
 	mkdir -pv $(CONFIGDIR)
 	mkdir -pv $(LOGDIR)
@@ -38,15 +38,15 @@ install: aldl-ftdi aldl-dummy
 	@echo '*******************************************************'
 	@echo
 	@echo '****************************************************************'
-	@echo ' The default log directory is /var/log/aldl, if you are running'
+	@echo ' The default log directory is /var/log/aldl-pi, if you are running'
 	@echo ' this program as a regular user, you must change permissions on'
 	@echo ' that directory...'
 	@echo '****************************************************************'
 	@echo
 	@echo Install complete, see configs in $(CONFIGDIR) before running
 
-aldl-ftdi: main.c serio-ftdi.o config.h aldl-io.h aldl-types.h $(OBJS)
-	gcc $(CFLAGS) $(LIBS) -lftdi main.c -o aldl-ftdi $(OBJS) serio-ftdi.o
+aldl-pi-ftdi: main.c serio-ftdi.o config.h aldl-io.h aldl-types.h $(OBJS)
+	gcc $(CFLAGS) $(LIBS) -lftdi main.c -o aldl-pi-ftdi $(OBJS) serio-ftdi.o
 	@echo
 	@echo '***************************************************'
 	@echo ' You must blacklist or rmmod the ftdi_sio driver!!'
@@ -54,13 +54,13 @@ aldl-ftdi: main.c serio-ftdi.o config.h aldl-io.h aldl-types.h $(OBJS)
 	@echo '***************************************************'
 	@echo
 
-aldl-tty: main.c serio-tty.o config.h aldl-io.h aldl-types.h $(OBJS)
+aldl-pi-tty: main.c serio-tty.o config.h aldl-io.h aldl-types.h $(OBJS)
 	@echo 'The TTY serial driver is unfinished,'
 	@echo 'Using it will simply generate an error.'
-	gcc $(CFLAGS) $(LIBS) main.c -o aldl-tty $(OBJS) serio-tty.o
+	gcc $(CFLAGS) $(LIBS) main.c -o aldl-pi-tty $(OBJS) serio-tty.o
 
-aldl-dummy: main.c serio-dummy.o config.h aldl-io.h aldl-types.h $(OBJS)
-	gcc $(CFLAGS) $(LIBS) main.c -o aldl-dummy $(OBJS) serio-dummy.o
+aldl-pi-dummy: main.c serio-dummy.o config.h aldl-io.h aldl-types.h $(OBJS)
+	gcc $(CFLAGS) $(LIBS) main.c -o aldl-pi-dummy $(OBJS) serio-dummy.o
 
 useful.o: useful.c useful.h config.h aldl-types.h
 	gcc $(CFLAGS) -c useful.c -o useful.o

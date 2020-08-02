@@ -21,7 +21,7 @@ useful.o: useful.c useful.h
 	gcc $(CFLAGS) -c useful.c
 
 install: aldl-analyzer analyzer.conf
-	cp -nv analyzer.conf /etc/aldl/analyzer.conf
+	cp -nv analyzer.conf /etc/aldl-pi/analyzer.conf
 	cp -v aldl-analyzer /usr/local/bin/aldl-analyzer
 
 clean:
