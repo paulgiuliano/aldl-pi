@@ -1,16 +1,22 @@
 # aldl-pi
 ALDL-based (OBD1) Raspberry Pi Automotive Dashboard
 # PARDON OUR DUST WHILE WE SET UP THIS NEW REPO
+TODO: integrate original README with site-based README
 
 ## Overview
-Inspired by some of the low-cost datastream display technologies available for OBD-II systems, I’ve manged to peice together a system for OBD-I vehicles based on the low cost Raspberry Pi ARM computer and a low-cost ‘reverse camera’ screen.
+Inspired by some of the low-cost datastream display technologies available for modern OBD-II systems, this project provides a platform for displaying engine data for OBD-I/ALDL vehicles using the low cost Raspberry Pi ARM computer connected to a low-cost screen. As an added aesthetic bonus, it is written in a terminal-style ncurses format to match the aesthetic of the 80s-90s vehicles which utilize the ALDL interface.
+
+This project is designed to manage ALDL datastreams from the 8192 baud series of OBD-I GM ECM which use the proprietary ALDL interface. It works on GNU/Linux based operating systems and has been most widely tests tested with EE mask LT1 ECMs.
 
 The total price of all the necessary parts to build this system is generally under $100. The screen is optional, and it can also carry out ‘black-box’ unattended logging if desired.
+
+This project also provides a data logging and analysis program to assist in using massive amounts of collected data for tuning.
 
 TODO: INSERT PHOTOS
 
 As the target device runs a fully loaded version of Debian GNU/Linux, it becomes not only a tuner’s best friend, but a fully capable car computer.
 
+Some key goals and objectives of this project:
 * Very low power consumption
 * Configurable char-based graphical display of engine parameters
 * Support for coaxial and HDMI displays
@@ -22,9 +28,13 @@ As the target device runs a fully loaded version of Debian GNU/Linux, it becomes
 * Very simple module api with no knowledge of the datastream necessary
 * Incredibly stable connection with very few dropped or corrupted packets
 * Optimized throughput for fairly responsive display
-* Although out-of-the-box configured specifically for the 1994-1995 LT1, it has been written from * the ground up to be easily adapted to any 8192 baud GM ECM with fairly simple configuration files.
+* Although out-of-the-box configured specifically for the 1994-1995 LT1, it has been written from the ground up to be easily adapted to any 8192 baud GM ECM with fairly simple configuration files.
 
-I’d recommend at least beginner level unix/linux knowledge before attempting installation of the software at this time.
+It is recommended to have at least beginner level UNIX/Linux knowledge before attempting installation of the software at this time.
+
+This system is in daily real-world use on multiple vehicles, performing full time datalogging and display. The goals above have all been met, and now optimization and testing on other ECM platforms is required.
+
+An averaging datalog analyzer is included to make logical use of massive amounts of log data to do timing and AFR adjustments though this feature has only been tested extensively on an LT1 engine.
 
 ## Required Components
 ### Raspberry Pi
@@ -62,7 +72,7 @@ If you have a usb to aldl cable already, it is most likely FTDI. You can read th
 A more generic serial driver is in the works that will allow other types of cables to be used, but I’m not motivated to finish it, so don’t hold your breath.
 
 ### Software
-You will need to download a copy of raspbian-wheezy (or later) from the raspberry pi website. A peice of software called NOOBS is available there to help you get it onto a flash card. The image is large, you should likely download it and place it on a flash card while waiting for your raspberry pi in the mail.
+You will need to download a copy of raspbian-wheezy (or later) from the raspberry pi website. Software like NOOBS or Etcher are available for the purpose of setting up the flash drive. The image is large, you should likely download it and place it on a flash card while waiting for your raspberry pi in the mail.
 
 You will also have to download a copy of aldl-pi, however if you plug the raspberry pi into your home ethernet network while preparing it, it’s perfectly capable of downloading it.
 
@@ -86,30 +96,26 @@ Just power it up where the black and red wires are in this picture and ignore th
 Be sure to mount the raspberry pi somewhere safe and dry, with enough ventilation.
 
 ## Software Install
-First, grab yourself the raspbian operating system and flash it to the card. This is well documented on the raspberry pi website, and these devices are designed for beginners. Boot it up on the bench, and play with it. You can plug it into your television and a usb keyboard for now, to get it set up.
+First, grab yourself the Raspbian operating system and flash it to the card. This is well documented on the raspberry pi website, and these devices are designed for beginners. Boot it up on the bench, and play with it. You can plug it into your television and a usb keyboard for now, to get it set up.
 
 Make sure it’s working correctly. Run the routines for enlarging the main partition, setting a root password, and creating a user. Read some tutorials, and have some fun. Linux is great.
 
 ### Building and installing aldl-pi
-Ensure you are connected to the internet:
+Clone this repository and enter the directory.
 
-    ping -c1 fbodytech.com
+    cd aldl-pi
 
-Now, log in as root (your prompt will end with a #) and we’ll walk through the necessary steps to get it working in total noob mode. Normally I am against running as root if not completely necessary, but this operating system is a throw-away at this point, so who cares.
+#### Configuration on Raspbian/Debian
+If you are using a debian-like system like a Raspberry Pi, you can run the `debian-config.sh` script which includes all of the steps for configuration and packages:
 
-TODO: UPDATE THIS FOR REPO
+    ./debian-config.sh
 
-Enter root’s home directory, and download the source code for aldl-pi. You will be compiling this yourself… (don’t worry, it’s automated).
+then run
 
-    cd ~
-    wget http://fbodytech.com/files/aldl-io-1.6.tar.gz
+    make && sudo make install
 
-Extract the tarball, and enter the directory.
-
-    tar zxf aldl-io-1.6.tar.gz
-    cd aldl-io-1.6
-
-Now, there are some required peices of software. We’ll install them before going any further.
+#### Configuration on other operating systems
+If you are not running a debian-like system or if you prefer a more manual configuration process, there are some required peices of software. We’ll install them before going any further.
 
     apt-get install ncurses-dev libftdi-dev
 
@@ -120,11 +126,13 @@ Linux has its own FTDI driver built into the kernel. aldl-pi uses raw usb via a 
 
 Now we can build it, and install it in one shot. This will also create a configuration directory in `/etc/aldl`, and install some default configurations.
 
-    make install
+    sudo make install
 
 Read over the notes briefly to ensure that the installation went alright.
 
-That’s pretty much it, it should run as-is.
+That’s pretty much it, it should run as-is with the `aldl.conf` and `datalogger.conf` files which are installed.
+
+Note that if your goal is to expand beyond the LT1 configuration, these files should be edited and the `sudo make install` command run again in order to update the `etc/aldl` folder. (see more information on this below in *Configuration*)
 
 ### Make a link to the log directory
 Make a nice convenient link to the log directory, so you can access your logs more easily:
@@ -155,7 +163,13 @@ Plug the FTDI cable into your raspberry pi. Wait a few seconds, then:
 
     lsusb
 
-You should get a list of all of your usb devices. Look for the ID string of your FTDI device. If it’s 0403:6001 (which is the most common), no adjustment is required. Otherwise, write it down so you can edit it in the config file.
+You should get a list of all of your usb devices. Look for the ID string of your FTDI device. If it’s 0403:6001 (which is the most common), no adjustment is required. Otherwise, write it down so you can edit it in the config file. Ane example of output is
+
+    Bus 001 Device 003: ID 0424:ec00 Some FTDI Device
+
+In `aldl.conf` is a `PORT=` line -- just throw 0x in front of it and you're good to go.
+
+    PORT=i:0x424:0xEC00
 
 ### Move to the config directory
 Enter the config directory, and view the configuration files available.
@@ -182,13 +196,99 @@ If you break a configuration file, the originals are in the examples/ directory 
 
 I’ll leave the rest to you, I’ve made the config files fairly easy to understand. Use aldl-dummy as a test after you make a change, to ensure that things are working correctly.
 
+TODO: A script which checks if the config files in this repository and `/etc/aldl-pi` are out of sync!
+
+### Running aldl-pi
+
+    aldl-dummy
+
+This runs a test program that requires no actual vehicle, and fakes an LT1 ecm so you can check out how it behaves.
+
+    aldl-ftdi
+
+You dont need to connect your usb cable, or start your car right away, it'll sit around and wait till you do.
+
 ## Automatic Operation
 As this software was designed with a ‘black box’ datalogger in mind, once it’s running, it aggressively tries to maintain a connnection. There are no buttons to press if the datastream is interrupted. When powered up and connected to a vehicle, it should ‘just work’.
 
 If you are using this software with no input device (which you probably are), you should configure it to start automatically on its own virtual console, with no login credentials required.
 
-Edit the inittab file (be careful, if you screw this up, your system will no longer boot!)
+Edit the `.bashrc` file by putting the following line near the bottom
 
-    nano /etc/inittab
+    sudo /home/pi/aldl-pi/aldl-pi-ftdi
 
-TODO: ADD DEVELOPERS README
+## Configuring your screen
+When using your screen, you might choose to use something like the standard 7" that is common in Raspberry Pi kits in which case some customization of the configuration files will help make it look more readable and scaled correctly.
+
+In order to adjust the screen size to fit, you must edit the `/boot/config.txt` file of the system, tuning the `framebuffer_width` and `framebuffer_height` parameters. For something like a 7" screen, the following parameters work well though feel free to play with these as you see fit:
+
+    framebuffer_width=240
+    framebuffer_height=160
+
+Lastly, if your screen is showing upside-down from how you would like it oriented, you can tune the following parameter to rotate:
+
+    lcd_rotate=2
+
+# Notes for Developers
+The following notes are reserved for developers who are interested in diving into the ALDL communication.
+
+## Access of Data
+* A linked list of aldl_record_t structures is constructed as fixed length buffer.
+
+* No locking is required for reading data from the top of the buffer, the data will NEVER be modified once it is attached to the linked list.
+
+* Data in a record always matches the array index of the definition set, as in `conf->def[x]` and `record->data[x]`.  This can be leveraged to easily get data from a definition.
+
+* There is a statistical structure that requires locking, `lock_stats()` and `unlock_stats()` need to be called.
+
+### Example
+This is a small example module that simply displays data from a defintion labeled "RPM".
+
+```c
+    void display_rpm(aldl_conf_t *aldl) {
+
+      /* get the index and store it, to avoid repeated lookups */
+      int rpmindex = get_index_by_name(aldl,"RPM");
+      pause_until_buffered(aldl);
+      aldl_record_t *rec = newest_record(aldl); /* ptr to the most current record */
+
+      while(1) {
+        /* pause until new data is available, then point to new record */
+        rec = next_record_wait(aldl,rec);
+
+        /* check return value.  if it's NULL that means..... */
+        if(rec == NULL) { /* we've disconnected ... */
+        printf("disconnected; waiting for connection...");
+        pause_until_connected(aldl);
+        continue; /* right now rec is NULL, we need to go back and get a rec */
+      };
+
+      /* in that record, get data field rpmindex, and the floating point value contained within ... also get the short name from the definition. */
+      printf("%s: %f\n",aldl->def[rpmindex].name, rec->data[rpmindex].f);
+    };
+  };
+```
+
+## Rules for Plugin Developers
+* Always call pause_until_buffered before your intial data retrieval, this ensures the buffer is full enough, and the connection has happened.  after one call, the buffer will ALWAYS be full enough.
+
+* Never access the linked list pointers directly, use the following functions:
+```c
+  aldl_record_t *newest_record(aldl_conf_t *aldl);
+  aldl_record_t *next_record_wait(aldl_record_t *rec);
+  aldl_record_t *next_record(aldl_record_t *rec);
+```
+  These ensure thread safety on the structural components themselves.  Be sure to check the return value, as a NULL pointer is returned if the connection is lost while waiting for a record.
+
+* Never, under any circumstances, write directly to any data structure from `aldl-types.h`
+
+* Ending the program via a plugin should always be done by running:
+  `while(1) set_commstate(ALDL_QUIT);` (not implemented yet)
+
+* Speed is important when using next_record or next_record_wait, your routine must theoretically execute in average speed more quickly than:
+```c
+  t = ( 0.122ms * number of bytes in all pkts * 1.2 )
+```
+  On an LT1 using 64 byte packets this allows approx. 10ms once calculation overhead is taken into account.  If your routine is slower on average, you must use newest_record() to allow frame skipping, in which case your routine can take t * bufsize time with no problems.
+
+* If you hit a buffer underrun, current behavior is to point to another record "somewhere".  The data will be out of sequence but technically valid.  To detect an underrun, checking for timestamp could be useful, as an underrun will almost certainly result in a timestamp decrementing.
