@@ -124,15 +124,15 @@ Linux has its own FTDI driver built into the kernel. aldl-pi uses raw usb via a 
     echo 'blacklist ftdi_sio' > /etc/modprobe.d/ftdi.conf
     rmmod ftdi_sio
 
-Now we can build it, and install it in one shot. This will also create a configuration directory in `/etc/aldl`, and install some default configurations.
+Now we can build it, and install it in one shot. This will also create a configuration directory in `/etc/aldl-pi`, and install some default configurations.
 
     sudo make install
 
 Read over the notes briefly to ensure that the installation went alright.
 
-That’s pretty much it, it should run as-is with the `aldl.conf` and `datalogger.conf` files which are installed.
+That’s pretty much it, it should run as-is with the `aldl-pi.conf` and `datalogger.conf` files which are installed.
 
-Note that if your goal is to expand beyond the LT1 configuration, these files should be edited and the `sudo make install` command run again in order to update the `etc/aldl` folder. (see more information on this below in *Configuration*)
+Note that if your goal is to expand beyond the LT1 configuration, these files should be edited and the `sudo make install` command run again in order to update the `etc/aldl-pi` folder. (see more information on this below in *Configuration*)
 
 ### Make a link to the log directory
 Make a nice convenient link to the log directory, so you can access your logs more easily:
@@ -167,26 +167,26 @@ You should get a list of all of your usb devices. Look for the ID string of your
 
     Bus 001 Device 003: ID 0424:ec00 Some FTDI Device
 
-In `aldl.conf` is a `PORT=` line -- just throw 0x in front of it and you're good to go.
+In `aldl-pi.conf` is a `PORT=` line -- just throw 0x in front of it and you're good to go.
 
     PORT=i:0x424:0xEC00
 
 ### Move to the config directory
 Enter the config directory, and view the configuration files available.
 
-    cd /etc/aldl/ ; ls
+    cd /etc/aldl-pi/ ; ls
 
 Here is a brief overview of what the various config files do:
 
-* aldl.conf – the main configuration file, with options for data acqusition rate, device configuration, and what modules are started by default.
+* aldl-pi.conf – the main configuration file, with options for data acqusition rate, device configuration, and what modules are started by default.
 * analyzer.conf – the offline analyzer configuration
 * consoleif.conf – configures the layout of the main display
 * datalogger.conf – configures the automatic datalogger
 * lt1.conf – datastream definition for the LT1. read it to get the names of the various readouts, etc.
 
-Look at aldl.conf first, especially if your device string has changed.
+Look at aldl-pi.conf first, especially if your device string has changed.
 
-    nano aldl.conf
+    nano aldl-pi.conf
 
 The configuration format is special. To specify a parameter and its value, it must simply have an equals sign directly between the value and parameter. Anything not directly adjacent to an equals sign is ignored.
 

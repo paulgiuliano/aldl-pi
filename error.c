@@ -33,7 +33,7 @@ char errstr[N_ERRORCODES][24] = {
 
 void error(errtype_t t, error_t code, char *str, ...) {
   va_list arg;
-  fprintf(stderr,"ALDL-IO: ");
+  fprintf(stderr,"ALDL-PI: ");
   fprintf(stderr,"%s ERROR (%i)\n",errstr[code],code);
   if(str != NULL) {
     fprintf(stderr,"NOTES: ");
@@ -57,4 +57,3 @@ void retardptr(void *p, char *note) {
   error(1,ERROR_RETARD,"null pointer in %s");
 }
 #endif
-

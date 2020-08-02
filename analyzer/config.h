@@ -1,5 +1,5 @@
 #define ANL_VERSION "1.0"
-#define ANL_CONFIGFILE "/etc/aldl/analyzer.conf"
+#define ANL_CONFIGFILE "/etc/aldl-pi/analyzer.conf"
 
 /* configure analysis grids */
 #define GRID_RPM_RANGE 7000
@@ -14,4 +14,3 @@
 
 /* if rpm is below this, engine is considered not running */
 #define MIN_RPM 500
-

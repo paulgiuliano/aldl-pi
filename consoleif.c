@@ -69,7 +69,7 @@ consoleif_conf_t *consoleif_load_config(aldl_conf_t *aldl);
 /* center half-width of an element on the screen */
 int xcenter(int width);
 int ycenter(int height);
- 
+
 /* print a centered string */
 void print_centered_string(char *str);
 void statusmessage(char *str);
@@ -107,9 +107,9 @@ void *consoleif_init(void *aldl_in) {
   /* load config file */
   consoleif_conf_t *conf = consoleif_load_config(aldl);
 
-  /* if /etc/aldl/consoleif-start.sh exists, run it */
-  if(access("/etc/aldl/consoleif-start.sh",X_OK) != -1) {
-    system("/etc/aldl/consoleif-start.sh");
+  /* if /etc/aldl-pi/consoleif-start.sh exists, run it */
+  if(access("/etc/aldl-pi/consoleif-start.sh",X_OK) != -1) {
+    system("/etc/aldl-pi/consoleif-start.sh");
   }
 
   /* initialize root window */
@@ -257,7 +257,7 @@ void draw_bin(gauge_t *g) {
 }
 
 void draw_errstr(gauge_t *g) {
-  int errfound = 0; 
+  int errfound = 0;
   int x = 0;
   gauge_blank(g);
   for(x=0;x<=aldl->n_defs - 1;x++) {
@@ -350,7 +350,7 @@ void draw_h_progressbar(gauge_t *g) {
 
   /* print LH text */
   int width_lhtext = sprintf(bigbuf,"%s [",def->name);
-  
+
   curs = bigbuf + width_lhtext; /* set cursor after initial text */
   int pbwidth = g->width - width_lhtext - width_rhtext;
   int filled = data_lm / ( g->top / pbwidth );
@@ -374,7 +374,7 @@ void draw_h_progressbar(gauge_t *g) {
   sprintf(curs,"%s",data,def->uom);
   #endif
 
-  move(g->y,g->x); 
+  move(g->y,g->x);
   gauge_blank(g);
 
   if(alarm_range(g) == 1) attron(COLOR_PAIR(RED_ON_BLACK));
@@ -408,7 +408,7 @@ consoleif_conf_t *consoleif_load_config(aldl_conf_t *aldl) {
   char *idstring = NULL;
   int n;
   for(n=0;n<conf->n_gauges;n++) {
-    gauge = &conf->gauge[n]; 
+    gauge = &conf->gauge[n];
     idstring = configopt(config,gconfig("A_NAME",n),NULL);
     if(idstring != NULL) { /* A_NAME is present */
       gauge->data_a = get_index_by_name(aldl,idstring);
@@ -470,7 +470,7 @@ float smooth_float(gauge_t *g) {
   aldl_record_t *r = rec;
   float avg = 0;
   for(x=0;x<=g->smoothing;x++) {
-    avg += ( r->data[g->data_a].f + r->data[g->data_b].f ) / 2; 
+    avg += ( r->data[g->data_a].f + r->data[g->data_b].f ) / 2;
     if(r->prev == NULL) { /* attempt to trap underrun (might not work) */
       error(1,ERROR_BUFFER,"buffer underrun caught in %s gauge\n\
            %i smoothing w/ %i total buffer, and %i prebuffer.\n\
@@ -493,4 +493,3 @@ void consoleif_handle_input() {
     /* do stuff here */
   }
 }
-

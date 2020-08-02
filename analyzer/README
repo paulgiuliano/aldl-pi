@@ -8,7 +8,7 @@ checked to attempt to discard bad data.
 Not really tested or designed for anything but an LT1.
 
 Requires fully manual configuration for log column numbering, doesn't use the
-aldl-io definition file at all.
+aldl-pi definition file at all.
 
 It includes the following analyzers:
 
@@ -22,15 +22,14 @@ Instructions:
 
 $ make & make install
 
-Have a look at /etc/aldl/analyzer.conf
+Have a look at /etc/aldl-pi/analyzer.conf
 
 You can disable various modules (wideband is disabled by default).  You have to
 manually configure column numbers for EVERY relavent peice of data in your log,
 it is pre-configured for the default LT1 configuration file that comes with the
-matching version of the aldl-io package.
+matching version of the aldl-pi package.
 
 Then run it:
 $ aldl-analyzer file1.csv file2.csv | less
 
 Use and trust at your own risk...
-
