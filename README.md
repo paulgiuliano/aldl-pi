@@ -213,9 +213,21 @@ As this software was designed with a ‘black box’ datalogger in mind, once it
 
 If you are using this software with no input device (which you probably are), you should configure it to start automatically on its own virtual console, with no login credentials required.
 
-Edit the inittab file (be careful, if you screw this up, your system will no longer boot!)
+Edit the `.bashrc` file by putting the following line near the bottom
 
-    nano /etc/inittab
+    sudo /home/pi/aldl-pi/aldl-pi-ftdi
+
+## Configuring your screen
+When using your screen, you might choose to use something like the standard 7" that is common in Raspberry Pi kits in which case some customization of the configuration files will help make it look more readable and scaled correctly.
+
+In order to adjust the screen size to fit, you must edit the `/boot/config.txt` file of the system, tuning the `framebuffer_width` and `framebuffer_height` parameters. For something like a 7" screen, the following parameters work well though feel free to play with these as you see fit:
+
+    framebuffer_width=240
+    framebuffer_height=160
+
+Lastly, if your screen is showing upside-down from how you would like it oriented, you can tune the following parameter to rotate:
+
+    lcd_rotate=2
 
 # Notes for Developers
 The following notes are reserved for developers who are interested in diving into the ALDL communication.
