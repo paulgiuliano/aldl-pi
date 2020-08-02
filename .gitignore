@@ -1,6 +1,9 @@
 *.a
 *.so
 *.o
+aldl-pi-ftdi
+aldl-pi-tty
+aldl-pi-dummy
 aldl-ftdi
 aldl-tty
 aldl-dummy

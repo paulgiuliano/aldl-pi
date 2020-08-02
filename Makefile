@@ -24,7 +24,7 @@ all: aldl-pi-ftdi aldl-pi-tty aldl-pi-dummy
 install: aldl-pi-ftdi aldl-pi-dummy
 	@echo Installing to $(BINDIR)
 	cp -fv $(BINARIES) $(BINDIR)/
-	ln -sf $(BINDIR)/aldl-ftdi $(BINDIR)/aldl
+	ln -sf $(BINDIR)/aldl-pi-ftdi $(BINDIR)/aldl-pi
 	@echo 'Creating directory structure'
 	mkdir -pv $(CONFIGDIR)
 	mkdir -pv $(LOGDIR)
@@ -46,7 +46,7 @@ install: aldl-pi-ftdi aldl-pi-dummy
 	@echo Install complete, see configs in $(CONFIGDIR) before running
 
 aldl-pi-ftdi: main.c serio-ftdi.o config.h aldl-io.h aldl-types.h $(OBJS)
-	gcc $(CFLAGS) $(LIBS) -lftdi main.c -o aldl-ftdi $(OBJS) serio-ftdi.o
+	gcc $(CFLAGS) $(LIBS) -lftdi main.c -o aldl-pi-ftdi $(OBJS) serio-ftdi.o
 	@echo
 	@echo '***************************************************'
 	@echo ' You must blacklist or rmmod the ftdi_sio driver!!'
@@ -57,10 +57,10 @@ aldl-pi-ftdi: main.c serio-ftdi.o config.h aldl-io.h aldl-types.h $(OBJS)
 aldl-pi-tty: main.c serio-tty.o config.h aldl-io.h aldl-types.h $(OBJS)
 	@echo 'The TTY serial driver is unfinished,'
 	@echo 'Using it will simply generate an error.'
-	gcc $(CFLAGS) $(LIBS) main.c -o aldl-tty $(OBJS) serio-tty.o
+	gcc $(CFLAGS) $(LIBS) main.c -o aldl-pi-tty $(OBJS) serio-tty.o
 
 aldl-pi-dummy: main.c serio-dummy.o config.h aldl-io.h aldl-types.h $(OBJS)
-	gcc $(CFLAGS) $(LIBS) main.c -o aldl-dummy $(OBJS) serio-dummy.o
+	gcc $(CFLAGS) $(LIBS) main.c -o aldl-pi-dummy $(OBJS) serio-dummy.o
 
 useful.o: useful.c useful.h config.h aldl-types.h
 	gcc $(CFLAGS) -c useful.c -o useful.o
