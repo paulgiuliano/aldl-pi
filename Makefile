@@ -28,11 +28,11 @@ install: aldl-pi-ftdi aldl-pi-dummy
 	@echo 'Creating directory structure'
 	mkdir -pv $(CONFIGDIR)
 	mkdir -pv $(LOGDIR)
-	@echo 'Copying example configs, will not overwrite...'
-	cp -nv ./config-examples/* $(CONFIGDIR)/
+	@echo 'Copying configs over, overwriting...'
+	cp -v ./config/* $(CONFIGDIR)/
 	@echo
 	@echo '*******************************************************'
-	@echo ' No automatic updates of configs are done.  Please see'
+	@echo ' Automatic updates of configs are done.  Please see'
 	@echo ' examples/ if this was an existing installation, and'
 	@echo ' attempt to merge these changes manually...'
 	@echo '*******************************************************'
