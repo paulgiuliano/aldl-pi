@@ -62,11 +62,11 @@ int main(int argc, char **argv) {
   modules_verify(aldl); /* check for bad module combos */
   aldl_data_init(aldl); /* init aldl data structs */
   set_connstate(ALDL_LOADING,aldl); /* init connection state */
+  aldl_threads_t *thread = smalloc(sizeof(aldl_threads_t)); /* thread spc PG moved forward too */
   modules_start(thread,aldl); /* start all other modules PG attempting to push forward consoleif */
   serial_init(aldl->serialstr); /* init i/o driver */
 
   /* ------- start threads ----------- */
-  aldl_threads_t *thread = smalloc(sizeof(aldl_threads_t)); /* thread spc */
   acq_start(thread,aldl); /* start acquisition thread */
   pthread_join(thread->acq,NULL); /* pause main thread until acq dies */
 
