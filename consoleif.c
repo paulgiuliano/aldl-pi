@@ -95,6 +95,7 @@ void draw_simpletext_a(gauge_t *g);
 void draw_bin(gauge_t *g);
 void draw_errstr(gauge_t *g);
 void gauge_blank(gauge_t *g);
+void bin_test(gauge_t *g);
 void draw_statusbar();
 
 /* --------------------------------------------*/
@@ -248,11 +249,12 @@ void cons_wait_for_connection() {
 
 void draw_bin(gauge_t *g) {
   aldl_define_t *def = &aldl->def[g->data_a];
-  gauge_blank(g);
+  //gauge_blank(g);
+  bin_test(g); //PG try to init some chars
   aldl_data_t *data = &rec->data[g->data_a];
-  if(data->i == 0) return;
-  attron(COLOR_PAIR(GREEN_ON_BLACK));
+  attron(COLOR_PAIR(GREEN_ON_BLACK)); //PG draw first to see it?
   mvprintw(g->y,g->x,"%s",def->name);
+  if(data->i == 0) return;
   attroff(COLOR_PAIR(GREEN_ON_BLACK));
 }
 
@@ -380,6 +382,12 @@ void draw_h_progressbar(gauge_t *g) {
   if(alarm_range(g) == 1) attron(COLOR_PAIR(RED_ON_BLACK));
   mvaddstr(g->y,g->x,bigbuf);
   if(alarm_range(g) == 1) attroff(COLOR_PAIR(RED_ON_BLACK));
+}
+
+void bin_test(gauge_t *g) {
+  move(g->y,g->x);
+  int x;
+  for(x=0;x<g->width;x++) addch('00');
 }
 
 void gauge_blank(gauge_t *g) {
