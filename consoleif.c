@@ -140,7 +140,7 @@ void *consoleif_init(void *aldl_in) {
   index_map = get_index_by_name(aldl,"MAP");
   index_speed = get_index_by_name(aldl,"SPEED");
 
-  cons_wait_for_connection();
+  //cons_wait_for_connection(); //PG disable for debug
 
   int x;
   gauge_t *gauge;
@@ -148,7 +148,7 @@ void *consoleif_init(void *aldl_in) {
   while(1) {
     rec = newest_record_wait(aldl,rec);
     if(rec == NULL) { /* disconnected */
-      cons_wait_for_connection();
+      //cons_wait_for_connection(); //PG disable for debug
       continue;
     }
     consoleif_handle_input();
