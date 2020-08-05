@@ -62,12 +62,12 @@ int main(int argc, char **argv) {
   modules_verify(aldl); /* check for bad module combos */
   aldl_data_init(aldl); /* init aldl data structs */
   set_connstate(ALDL_LOADING,aldl); /* init connection state */
+  modules_start(thread,aldl); /* start all other modules PG attempting to push forward consoleif */
   serial_init(aldl->serialstr); /* init i/o driver */
 
   /* ------- start threads ----------- */
   aldl_threads_t *thread = smalloc(sizeof(aldl_threads_t)); /* thread spc */
   acq_start(thread,aldl); /* start acquisition thread */
-  modules_start(thread,aldl); /* start all other modules */
   pthread_join(thread->acq,NULL); /* pause main thread until acq dies */
 
   /* ----- cleanup ------------- */
@@ -171,7 +171,7 @@ void aldl_sanity_check(aldl_conf_t *aldl) {
     y = aldl->def[x].packet;
     if(y > aldl->comm->n_packets || y < 0) {
       error(1,ERROR_CONFIG,"Definition for %s belongs to bad packet %i",
-            aldl->def[x].name,aldl->def[x].packet); 
+            aldl->def[x].name,aldl->def[x].packet);
     }
     p = &aldl->comm->packet[y];
     if(aldl->def[x].offset > p->length - p->offset) {
