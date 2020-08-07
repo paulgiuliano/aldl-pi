@@ -387,7 +387,7 @@ void draw_h_progressbar(gauge_t *g) {
 void bin_test(gauge_t *g) {
   move(g->y,g->x);
   int x;
-  for(x=0;x<g->width;x++) addch('00');
+  for(x=0;x<g->width;x++) addch('X');
 }
 
 void gauge_blank(gauge_t *g) {
